@@ -78,14 +78,18 @@ class Server:
                         self.lock.acquire()
                         try:
                             other_user = self.connectionRequests[username]
-                            self.clients[username]["engaged"] = True
-                            self.clients[username]["connected_with"] = other_user
-                            self.clients[other_user]["engaged"] = True
-                            self.clients[other_user]["connected_with"] = username
-                            del self.connectionRequests[username]
-                            self.lock.release()
-                            self.clients[username]["socket"].send(f"Connected with {other_user}".encode())
-                            self.clients[other_user]["socket"].send(f"Connected with {username}".encode())
+                            if(self.clients[other_user]["engaged"]):
+                                del self.connectionRequests[username]
+                                client_socket.send(f"Your bad, you responded late, {other_user} has connected with some other user")
+                            else:
+                                self.clients[username]["engaged"] = True
+                                self.clients[username]["connected_with"] = other_user
+                                self.clients[other_user]["engaged"] = True
+                                self.clients[other_user]["connected_with"] = username
+                                del self.connectionRequests[username]
+                                self.lock.release()
+                                self.clients[username]["socket"].send(f"Connected with {other_user}".encode())
+                                self.clients[other_user]["socket"].send(f"Connected with {username}".encode())
                         except Exception as e:
                             print(e)
                         finally:
