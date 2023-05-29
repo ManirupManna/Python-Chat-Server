@@ -80,7 +80,7 @@ class Server:
                             other_user = self.connectionRequests[username]
                             if(self.clients[other_user]["engaged"]):
                                 del self.connectionRequests[username]
-                                client_socket.send(f"Your bad, you responded late, {other_user} has connected with some other user")
+                                client_socket.send((f"Your bad, you responded late, {other_user} has connected with some other user").encode())
                             else:
                                 self.clients[username]["engaged"] = True
                                 self.clients[username]["connected_with"] = other_user
